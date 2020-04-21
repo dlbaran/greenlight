@@ -48,14 +48,15 @@
 @import "sessions";
 @import "utilities/fonts";
 @import "users";
+@import url("https://cdn.rawgit.com/rastikerdar/shabnam-font/v5.0.1/dist/font-face.css");
 
 * {
   outline: none !important;
 }
 
 html, body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-  // font-family: 'Shabnam', sans-serif !important;
+  //font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-family: 'Shabnam', sans-serif !important;
   position: relative;
   width: 100%;
   height: 100%;
