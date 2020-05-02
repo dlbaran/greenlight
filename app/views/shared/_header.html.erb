@@ -1,16 +1,16 @@
 <%
-# BigBlueButton open source conferencing system - http://www.bigbluebutton.org/.
-# Copyright (c) 2018 BigBlueButton Inc. and by respective authors (see below).
-# This program is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License as published by the Free Software
-# Foundation; either version 3.0 of the License, or (at your option) any later
-# version.
-#
-# BigBlueButton is distributed in the hope that it will be useful, but WITHOUT ANY
-# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-# PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
-# You should have received a copy of the GNU Lesser General Public License along
-# with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
+  # BigBlueButton open source conferencing system - http://www.bigbluebutton.org/.
+  # Copyright (c) 2018 BigBlueButton Inc. and by respective authors (see below).
+  # This program is free software; you can redistribute it and/or modify it under the
+  # terms of the GNU Lesser General Public License as published by the Free Software
+  # Foundation; either version 3.0 of the License, or (at your option) any later
+  # version.
+  #
+  # BigBlueButton is distributed in the hope that it will be useful, but WITHOUT ANY
+  # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  # PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+  # You should have received a copy of the GNU Lesser General Public License along
+  # with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 %>
 
 <div class="header py-4">
@@ -18,7 +18,7 @@
     <div class="d-flex">
       <%= link_to (current_user ? home_page : root_path), class: "header-brand" do %>
         <% begin %>
-          <%= image_tag(logo_image, class: "header-brand-img", alt:"") %>
+          <%= image_tag(logo_image, class: "header-brand-img", alt: "") %>
         <% rescue %>
           <%= t("administrator.site_settings.branding.invalid") %>
         <% end %>
@@ -59,7 +59,7 @@
               </span>
             </a>
             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow" x-placement="bottom-end">
-              <%= link_to edit_user_path(current_user), class: "dropdown-item"  do %>
+              <%= link_to edit_user_path(current_user), class: "dropdown-item" do %>
                 <i class="dropdown-icon fas fa-id-card mr-3"></i><%= t("header.dropdown.settings") %>
               <% end %>
               <% highest_role = current_user.highest_priority_role %>
@@ -67,7 +67,7 @@
                 <%= link_to admins_path, class: "dropdown-item" do %>
                   <i class="dropdown-icon fas fa-user-tie mr-3"></i><%= t("header.dropdown.account_settings") %>
                 <% end %>
-              <% elsif highest_role.get_permission("can_manage_rooms_recordings")%>
+              <% elsif highest_role.get_permission("can_manage_rooms_recordings") %>
                 <%= link_to admin_rooms_path, class: "dropdown-item" do %>
                   <i class="dropdown-icon fas fa-user-tie mr-3"></i><%= t("header.dropdown.account_settings") %>
                 <% end %>
@@ -75,20 +75,23 @@
                 <%= link_to admin_site_settings_path, class: "dropdown-item" do %>
                   <i class="dropdown-icon fas fa-user-tie mr-3"></i><%= t("header.dropdown.account_settings") %>
                 <% end %>
-              <% elsif highest_role.get_permission("can_edit_roles")%>
+              <% elsif highest_role.get_permission("can_edit_roles") %>
                 <%= link_to admin_roles_path, class: "dropdown-item" do %>
                   <i class="dropdown-icon fas fa-user-tie mr-3"></i><%= t("header.dropdown.account_settings") %>
                 <% end %>
               <% end %>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="http://docs.bigbluebutton.org/install/greenlight-v2.html" target="_blank" rel="noopener">
+              <a class="dropdown-item" href="https://www.aparat.com/v/uFQjn" target="_blank" rel="noopener">
                 <i class="dropdown-icon far fa-question-circle"></i> <%= t("header.dropdown.help") %>
               </a>
-              <% if Rails.configuration.report_issue_url.present? %>
-                <a class="dropdown-item" href="<%= Rails.configuration.report_issue_url %>" target="_blank" rel="noopener">
-                  <i class="dropdown-icon fas fa-exclamation mr-3"></i><%= t("errors.internal.report") %>
-                </a>
-              <% end %>
+              <a class="dropdown-item" href="/user-guide.pdf" target="_blank" rel="noopener">
+                <i class="dropdown-icon fas fa-download"></i><%= t("header.dropdown.download") %>
+              </a>
+              <%# if Rails.configuration.report_issue_url.present? %>
+              <!--                <a class="dropdown-item" href="<%#= Rails.configuration.report_issue_url %>" target="_blank" rel="noopener">-->
+              <!--                  <i class="dropdown-icon fas fa-exclamation mr-3"></i><%#= t("errors.internal.report") %>-->
+              <!--                </a>-->
+              <%# end %>
               <%= link_to logout_path, class: "dropdown-item" do %>
                 <i class="dropdown-icon fas fa-sign-out-alt"></i> <%= t("header.dropdown.signout") %>
               <% end %>
@@ -107,6 +110,21 @@
           <% if allow_user_signup? && allow_greenlight_accounts %>
             <%= link_to t("signup.title"), signup_path, :class => "btn btn-outline-primary mx-2 sign-in-button" %>
           <% end %>
+
+          <div class="dropdown show">
+            <a href="#" class="btn btn-secondary btn-outline-primary dropdown-toggle"  id="dropdownMenuLink" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">
+              <span>راهنما</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow" x-placement="bottom-end">
+              <a class="dropdown-item" href="https://www.aparat.com/v/uFQjn" target="_blank" rel="noopener">
+                <i class="dropdown-icon far fa-question-circle"></i> <%= t("header.dropdown.help") %>
+              </a>
+              <a class="dropdown-item" href="/user-guide.pdf" target="_blank" rel="noopener">
+                <i class="dropdown-icon fas fa-download"></i><%= t("header.dropdown.download") %>
+              </a>
+            </div>
+          </div>
+
         <% end %>
       </div>
     </div>
