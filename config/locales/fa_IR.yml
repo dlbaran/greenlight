@@ -30,6 +30,8 @@ fa_IR:
         user:
           confirmation: رمز عبور با هم یکسان نیستند
   administrator:
+    monitoring:
+      title: مانیتورینگ
     site_settings:
       authentication:
         disabled: غیرفعال شده
