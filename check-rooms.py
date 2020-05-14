@@ -1,6 +1,13 @@
-import requests as req
-import xml.etree.ElementTree as ET
+#!/usr/bin/python3
+
+import sys
+import subprocess
+import re
+import hashlib
+import requests
 import logging
+
+from xml.etree import ElementTree
 
 logger = logging.getLogger('report')
 logger.setLevel(logging.DEBUG)
@@ -18,27 +25,90 @@ fh.setFormatter(formatter)
 logger.addHandler(ch)
 logger.addHandler(fh)
 
+###
+## bbb-conf --secret
+#
+#    URL: https://.../bigbluebutton/
+#    Secret: ....
+#
 
-print 'running rooms: '
+verbose = False
+if len(sys.argv) > 1 and sys.argv[1] == '-v':
+    verbose = True
 
-res = req.get("https://meet.kntu.ac.ir/bigbluebutton/api/getMeetings?checksum=aca79e66c07bc444f1f6a2db4429408b5cc131ec")
-print res.content
-root = ET.fromstring(res.content)
+tmp = subprocess.run(['/usr/bin/bbb-conf', '--secret'], stdout=subprocess.PIPE, universal_newlines=True)
+#PYTHON 3.7 tmp = subprocess.run(['/usr/bin/bbb-conf', '--secret'], capture_output=True, text=True)
+output = tmp.stdout
 
-count = 0
-num_meeting = 0
-for meet in root.iter('meeting'):
-    num_meeting += 1
-    for attendees in meet.iter('attendees'):
-        print len(attendees)
-        count += len(attendees)
+URL = None
+secret = None
+
+for line in output.splitlines():
+    m = re.search('URL: (?P<URL>.*/bigbluebutton/)', line)
+    if m:
+        URL = m.group('URL')
+        continue
+    m = re.search('Secret: (?P<secret>.*)$', line)
+    if m:
+        secret = m.group('secret')
 
 
+if not URL or not secret:
+    print('error getting URL and/or secret. Is "bbb-conf --secret" returning it?')
 
-print 'number of online meetings: ' + str(num_meeting)
-print 'all attendeess in room: '+ str(count)
+APIURL=URL + 'api/'
 
-logger.info('number of online meetings: ' + str(num_meeting))
-logger.info('all attendeess in room: ' + str(count))
+apimethod='getMeetings'
+querystring=''
 
-# https://meet.kntu.ac.ir/bigbluebutton/api/getMeetings?checksum=aca79e66c07bc444f1f6a2db4429408b5cc131ec
+h = hashlib.sha1((apimethod+querystring+secret).encode('utf-8'))
+checksum = h.hexdigest()
+
+if len(querystring) > 0:
+    querystring = querystring + '&'
+
+requesturl = APIURL + apimethod + '?' + querystring + 'checksum=' + checksum
+
+response = requests.get(requesturl)
+tree = ElementTree.fromstring(response.content)
+
+if tree.find('returncode').text != 'SUCCESS':
+    print('error getting API data')
+    sys.exit(1)
+meetings = tree.find('meetings')
+
+num_meetings = 0
+num_users = 0
+num_video = 0
+
+for m in meetings.iter('meeting'):
+    meetname = m.find('meetingName').text
+    meetid = m.find('meetingID').text
+    participants = m.find('participantCount').text
+    video = m.find('videoCount').text
+
+    meta = m.find('metadata')
+    origin = meta.find('bbb-origin').text
+    if meta.find('bbb-context') is not None:
+        meetname = meta.find('bbb-context').text + ' / ' + meetname
+
+    print('--[ %s ]---< %s / %s >---' % (meetname, meetid, origin))
+    if verbose:
+        for a in m.find('attendees').iter('attendee'):
+            v = ' '
+            if a.find('hasVideo').text == 'true':
+                v = 'V'
+            audio = ' '
+            if a.find('hasJoinedVoice').text == 'true':
+                audio = 'A'
+            print('    +--[ %-10s ]--(%s%s)-> %s' % (a.find('role').text, v, audio, a.find('fullName').text))
+    print('    +==> %2s participants' % (participants,))
+    print('    +==> %2s videostreams' % (video,))
+
+    num_meetings += 1
+    num_users += int(participants)
+    num_video += int(video)
+
+print('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
+logger.info('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
+
