@@ -6,24 +6,25 @@ import re
 import hashlib
 import requests
 import logging
+from logging.handlers import TimedRotatingFileHandler
 
 from xml.etree import ElementTree
 
+logname = "/home/bbuser/logs/participants.log"
+timedhandler = TimedRotatingFileHandler(logname, when='midnight', interval=1)
+timedhandler.suffix = "%Y%m%d"
+
+formatter = logging.Formatter('%(asctime)s - %(message)s', datefmt="%H:%M")
+timedhandler.setFormatter(formatter)
+
+console_handler = logging.StreamHandler()
+#console_handler.setLevel(logging.ERROR)
+
 logger = logging.getLogger('report')
+logger.addHandler(timedhandler)
+logger.addHandler(console_handler)
+
 logger.setLevel(logging.DEBUG)
-# create file handler which logs even debug messages
-fh = logging.FileHandler('report.log')
-fh.setLevel(logging.DEBUG)
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-fh.setFormatter(formatter)
-# add the handlers to logger
-logger.addHandler(ch)
-logger.addHandler(fh)
 
 ###
 ## bbb-conf --secret
@@ -54,7 +55,7 @@ for line in output.splitlines():
 
 
 if not URL or not secret:
-    print('error getting URL and/or secret. Is "bbb-conf --secret" returning it?')
+    logger.error('error getting URL and/or secret. Is "bbb-conf --secret" returning it?')
 
 APIURL=URL + 'api/'
 
@@ -73,7 +74,7 @@ response = requests.get(requesturl)
 tree = ElementTree.fromstring(response.content)
 
 if tree.find('returncode').text != 'SUCCESS':
-    print('error getting API data')
+    logger.error('error getting API data')
     sys.exit(1)
 meetings = tree.find('meetings')
 
@@ -92,23 +93,25 @@ for m in meetings.iter('meeting'):
     if meta.find('bbb-context') is not None:
         meetname = meta.find('bbb-context').text + ' / ' + meetname
 
-    print('--[ %s ]---< %s / %s >---' % (meetname, meetid, origin))
+    # logger.info('--[ %s ]---< %s / %s >---' % (meetname, meetid, origin))
+    logger.info('--[ %s ]---' % (meetname))
     if verbose:
-        for a in m.find('attendees').iter('attendee'):
-            v = ' '
-            if a.find('hasVideo').text == 'true':
-                v = 'V'
-            audio = ' '
-            if a.find('hasJoinedVoice').text == 'true':
-                audio = 'A'
-            print('    +--[ %-10s ]--(%s%s)-> %s' % (a.find('role').text, v, audio, a.find('fullName').text))
-    print('    +==> %2s participants' % (participants,))
-    print('    +==> %2s videostreams' % (video,))
+        'verbose is identical to normal yet'
+    for a in m.find('attendees').iter('attendee'):
+        v = ' '
+        if a.find('hasVideo').text == 'true':
+            v = 'V'
+        audio = ' '
+        if a.find('hasJoinedVoice').text == 'true':
+            audio = 'A'
+        logger.info('    +--[ %-10s ]--(%s%s)-> %s' % (a.find('role').text, v, audio, a.find('fullName').text))
+    logger.info('    +==> %2s participants' % (participants,))
+    logger.info('    +==> %2s videostreams' % (video,))
 
     num_meetings += 1
     num_users += int(participants)
     num_video += int(video)
 
-print('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
+#print('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
 logger.info('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
 
