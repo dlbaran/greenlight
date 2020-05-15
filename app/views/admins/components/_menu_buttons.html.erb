@@ -43,7 +43,7 @@
     <% end %>
   <% end %>
   <% if highest_role.get_permission("can_manage_users") || highest_role.name == "super_admin" %>
-    <%= link_to "https://meet.kntu.ac.ir/monitoring/d/HIbd_CXZz2/bigbluebutton-server-instance?orgId=1&refresh=5s", class: "list-group-item list-group-item-action dropdown-item #{"active" if active_page == "index"}" do %>
+    <%= link_to "https://meet.kntu.ac.ir/monitoring/d/HIbd_CXZz2/bigbluebutton-server-instance?orgId=1&refresh=5s", class: "list-group-item list-group-item-action dropdown-item" do %>
       <span class="icon mr-4"><i class="fas fa-desktop"></i><%= t("administrator.monitoring.title") %>
     <% end %>
   <% end %>
