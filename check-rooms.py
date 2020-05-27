@@ -114,4 +114,5 @@ for m in meetings.iter('meeting'):
 
 #print('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
 logger.info('total: %2i meetings, %2i users, %2i videostreams' % (num_meetings, num_users, num_video))
+logger.info("==================================== \n")
 
