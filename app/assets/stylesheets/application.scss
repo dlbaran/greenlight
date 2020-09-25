@@ -30,7 +30,7 @@
  *= require_self
  */
 
-// @import "https://cdn.rawgit.com/rastikerdar/shabnam-font/v5.0.1/dist/font-face.css";
+ #@import "https://cdn.rawgit.com/rastikerdar/shabnam-font/v5.0.1/dist/font-face.css";
 
 @import "tabler/variables";
 @import "bootstrap";
@@ -52,6 +52,7 @@
 
 * {
   outline: none !important;
+  font-family: 'Shabnam', sans-serif !important;
 }
 
 html, body {
