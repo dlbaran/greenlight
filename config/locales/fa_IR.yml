@@ -230,13 +230,13 @@ fa_IR:
     designs: طراحی های شخصی
     authentication: احراز هویت کاربر
   footer:
-    powered_by: "Customized by"
+    powered_by: Powered by %{href}
   forgot_password:
     subtitle: فراموشی رمز عبور
     email: ایمیل
     submit: ارسال
   go_back: بازگشت
-  greenlight: Morteza Taghaddomi
+  greenlight: Greenlight
   header:
     help: راهنما
     all_recordings: تمام جلسات ضبط شده
