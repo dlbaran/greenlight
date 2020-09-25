@@ -358,8 +358,8 @@ class RoomsController < ApplicationController
     limit = @settings.get_value("Room Limit").to_i
 
     # Does not apply to admin or users that aren't signed in
-    # 15+ option is used as unlimited
-    return false if current_user&.has_role?(:admin) || limit == 15
+    # 20+ option is used as unlimited
+    return false if current_user&.has_role?(:admin) || limit == 20
 
     current_user.rooms.length >= limit
   end
