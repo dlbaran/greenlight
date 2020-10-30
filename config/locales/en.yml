@@ -295,8 +295,8 @@ en:
     search:
       start: Start searching...
   landing:
-    about: "سامانه مجازی جلسات دانشگاه صنعتی خواجه نصیر الدین طوسی"
-    welcome: Welcome to Kntu.
+    about: "دبستان پسرانه شاهد نبی اکرم (ص)"
+    welcome: Welcome to Shahed.
     video: Watch our tutorial on using Greenlight
     upgrade: Show me how to upgrade to 2.0!
     version: We've released a new version of Greenlight, but your database isn't compatible.
